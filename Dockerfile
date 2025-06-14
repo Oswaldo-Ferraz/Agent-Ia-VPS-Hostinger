@@ -59,12 +59,14 @@ RUN npm ci --only=production && npm cache clean --force
 # Copia o resto dos arquivos
 COPY . .
 
-# Cria diretórios necessários e define permissões
+# Cria diretórios necessários e define permissões adequadas
 RUN mkdir -p .wwebjs_auth logs exports config tmp \
-    && chmod -R 777 /app
+    && chown -R botuser:botuser /app \
+    && chmod -R 755 /app \
+    && chmod -R 775 /app/.wwebjs_auth /app/logs /app/exports /app/tmp /app/config
 
-# Para teste local, usar root. Para produção, descomentar linha abaixo:
-# USER botuser
+# Usar usuário não-root para segurança em produção
+USER botuser
 
 # Define as variáveis de ambiente
 ENV NODE_ENV=production

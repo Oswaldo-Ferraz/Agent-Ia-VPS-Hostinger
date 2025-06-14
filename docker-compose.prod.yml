@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  bot-whatsapp:
+    build: .
+    container_name: bot-whatsapp-prod
+    restart: unless-stopped
+    
+    environment:
+      - NODE_ENV=production
+      - TZ=America/Sao_Paulo
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      # Variáveis sensíveis serão configuradas diretamente no Portainer
+      
+    volumes:
+      # Volumes nomeados para persistência
+      - whatsapp_session:/app/.wwebjs_auth
+      - bot_logs:/app/logs
+      - bot_exports:/app/exports
+      - bot_config:/app/config
+      - bot_tmp:/app/tmp
+      
+    ports:
+      - "3000:3000"
+      
+    healthcheck:
+      test: ["CMD", "node", "-e", "console.log('Bot está rodando')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+      
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+          
+    networks:
+      - bot-network
+
+volumes:
+  whatsapp_session:
+    driver: local
+  bot_logs:
+    driver: local
+  bot_exports:
+    driver: local
+  bot_config:
+    driver: local
+  bot_tmp:
+    driver: local
+
+networks:
+  bot-network:
+    driver: bridge

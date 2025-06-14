@@ -3,6 +3,16 @@
 ## 📋 VISÃO GERAL
 Este guia vai te ajudar a subir o bot WhatsApp no Portainer com integração Git, permitindo atualizações automáticas sempre que você fizer push no repositório.
 
+### ✅ **INFORMAÇÕES COLETADAS:**
+- **Portainer:** https://painel.agenciafer.com.br/#!/home
+- **Repositório:** https://github.com/AgenciaFER/bot-whatsapp.git (privado)
+- **Usuário:** AgenciaFER
+
+### ✅ **BACKUP INICIAL REALIZADO:**
+- **Commit:** f8d829f - "✅ Docker funcionando - Bot WhatsApp pronto para produção"
+- **Push:** Realizado com sucesso
+- **Status:** Código atual salvo no Git
+
 ## 🎯 OBJETIVOS
 - ✅ Preparar código para produção (remover permissões de desenvolvimento)
 - ✅ Configurar repositório Git adequadamente  
@@ -30,34 +40,34 @@ Este guia vai te ajudar a subir o bot WhatsApp no Portainer com integração Git
 
 ## 🚀 FASE 1: PREPARAR CÓDIGO PARA PRODUÇÃO
 
-### ❌ PASSO 1.1: Ajustar Dockerfile para Produção
-**Status: ⏳ PENDENTE**
+### ✅ PASSO 1.1: Ajustar Dockerfile para Produção
+**Status: ✅ CONCLUÍDO**
 
-**O que vamos fazer:**
-- Remover `chmod -R 777` (inseguro para produção)
-- Configurar usuário não-root adequado
-- Manter funcionamento do Chromium
+**✅ Mudanças aplicadas:**
+- ✅ Removido `chmod -R 777` (inseguro)
+- ✅ Configurado usuário não-root (`botuser`)
+- ✅ Mantido funcionamento do Chromium
+- ✅ Permissões adequadas aplicadas (755/775)
+- ✅ Segurança em produção habilitada
 
-**Ação necessária:**
-```bash
-# Vou editar o Dockerfile para você
-```
+### ✅ PASSO 1.2: Criar docker-compose para Produção  
+**Status: ✅ CONCLUÍDO**
 
-### ❌ PASSO 1.2: Criar docker-compose para Produção  
-**Status: ⏳ PENDENTE**
+**✅ Arquivo criado:** `docker-compose.prod.yml`
+- ✅ Volumes nomeados em vez de bind mounts
+- ✅ Configurações de segurança aplicadas
+- ✅ Healthcheck configurado
+- ✅ Limites de recursos definidos
+- ✅ Network isolada criada
 
-**O que vamos fazer:**
-- Criar `docker-compose.prod.yml` específico para Portainer
-- Configurar volumes nomeados em vez de bind mounts
-- Adicionar configurações de segurança
+### ✅ PASSO 1.3: Preparar Variáveis de Ambiente
+**Status: ✅ CONCLUÍDO**
 
-### ❌ PASSO 1.3: Preparar Variáveis de Ambiente
-**Status: ⏳ PENDENTE**
-
-**O que vamos fazer:**
-- Criar `.env.example` atualizado (sem valores sensíveis)
-- Documentar todas as variáveis necessárias
-- Preparar lista para configurar no Portainer
+**✅ Arquivo atualizado:** `.env.example`
+- ✅ Todas as variáveis documentadas
+- ✅ Instruções para Portainer incluídas
+- ✅ Valores sensíveis removidos
+- ✅ Comentários explicativos adicionados
 
 ---
 
