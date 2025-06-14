@@ -7,47 +7,43 @@ services:
     restart: unless-stopped
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_CALENDAR_EMAIL=${GOOGLE_CALENDAR_EMAIL}
+      - ADMIN_PHONE=${ADMIN_PHONE}
       - NODE_ENV=production
     volumes:
-      # Persiste sessão do WhatsApp
+      # Persiste sessão do WhatsApp (CRÍTICO - não perder conexão)
       - whatsapp_session:/app/.wwebjs_auth
       # Persiste logs
-      - ./logs:/app/logs
-      # Config do Google Calendar
-      - ./config:/app/config:ro
+      - bot_logs:/app/logs
+      # Persiste exports de contatos
+      - bot_exports:/app/exports
+      # Config do Google Calendar (somente leitura)
+      - bot_config:/app/config:ro
     networks:
       - bot-network
-    # Opcional: expor porta se precisar de webhook/API
-    # ports:
-    #   - "3000:3000"
-    depends_on:
-      - bot-db
     logging:
       driver: "json-file"
       options:
-        max-size: "50m"
-        max-file: "3"
-
-  # Banco de dados para persistir conversas (opcional)
-  bot-db:
-    image: sqlite:latest
-    container_name: bot-whatsapp-db
-    restart: unless-stopped
-    volumes:
-      - bot_data:/var/lib/sqlite
-    networks:
-      - bot-network
+        max-size: "100m"
+        max-file: "5"
+    # Configurações específicas para WhatsApp Web
+    shm_size: '2g'
+    security_opt:
+      - seccomp:unconfined
 
 volumes:
   whatsapp_session:
     driver: local
-  bot_data:
+  bot_logs:
+    driver: local
+  bot_exports:
+    driver: local
+  bot_config:
     driver: local
 
 networks:
   bot-network:
     driver: bridge
-    external: false
   # Para conectar com N8N/Evolution API
   shared-network:
     external: true

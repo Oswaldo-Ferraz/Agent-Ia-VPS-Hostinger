@@ -4,25 +4,44 @@ const fs = require('fs');
 const path = require('path');
 const { updateTypingState } = require('../utils/helpers'); // Added import
 
+// Configuração do Puppeteer baseada no ambiente
+const isDockerEnvironment = process.env.NODE_ENV === 'production' || fs.existsSync('/.dockerenv');
+const puppeteerConfig = {
+  headless: true,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-accelerated-2d-canvas',
+    '--no-first-run',
+    '--no-zygote',
+    '--disable-gpu',
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding'
+  ]
+};
+
+// Se estiver no Docker, usa o Chromium instalado
+if (isDockerEnvironment) {
+  puppeteerConfig.executablePath = '/usr/bin/chromium';
+  console.log('🐳 Usando Chromium no Docker');
+} else {
+  // Se estiver no macOS local, usa o Chrome
+  puppeteerConfig.executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  console.log('💻 Usando Chrome local no macOS');
+}
+
+console.log(`🔧 Configuração Puppeteer: ${isDockerEnvironment ? 'Docker/Chromium' : 'Local/Chrome'}`);
+console.log(`🔧 Executable Path: ${puppeteerConfig.executablePath}`);
+
 // Instância do cliente WhatsApp
 const client = new Client({
   authStrategy: new LocalAuth({ 
     clientId: 'bot-whatsapp',
     dataPath: path.join(process.cwd(), '.wwebjs_auth')
   }),
-  puppeteer: {
-    headless: true, // Alterado para true para rodar sem interface gráfica
-    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // Caminho para o Chrome
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--no-first-run',
-      '--no-zygote',
-      '--disable-gpu'
-    ]
-  }
+  puppeteer: puppeteerConfig
 });
 
 // Diretório para salvar arquivos temporários de áudio

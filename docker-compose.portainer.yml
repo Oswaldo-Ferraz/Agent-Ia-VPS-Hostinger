@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  bot-whatsapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bot-whatsapp
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_CALENDAR_EMAIL=${GOOGLE_CALENDAR_EMAIL}
+      - ADMIN_PHONE=${ADMIN_PHONE}
+      - NODE_ENV=production
+      - TZ=America/Sao_Paulo
+    volumes:
+      # Volume crítico - Sessão WhatsApp (NUNCA DELETAR)
+      - whatsapp_session:/app/.wwebjs_auth
+      # Logs persistentes
+      - bot_logs:/app/logs
+      # Exports de contatos
+      - bot_exports:/app/exports
+      # Arquivos temporários
+      - bot_tmp:/app/tmp
+      # Config Google Calendar (será populado via console)
+      - bot_config:/app/config
+    networks:
+      - bot-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "5"
+    # Configurações necessárias para WhatsApp Web/Puppeteer
+    shm_size: '2gb'
+    security_opt:
+      - seccomp:unconfined
+    # Recursos limitados para evitar sobrecarga
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+volumes:
+  whatsapp_session:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/portainer/volumes/bot-whatsapp_whatsapp_session
+  bot_logs:
+    driver: local
+  bot_exports:
+    driver: local
+  bot_tmp:
+    driver: local
+  bot_config:
+    driver: local
+
+networks:
+  bot-network:
+    driver: bridge
+    name: bot-whatsapp-network
