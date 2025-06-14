@@ -1,0 +1,45 @@
+[
+  {
+    "id": "bot-whatsapp-deploy",
+    "execute-command": "/opt/deployments/bot-whatsapp/deploy-git.sh",
+    "command-working-directory": "/opt/deployments/bot-whatsapp",
+    "response-message": "🚀 Deploy do Bot WhatsApp iniciado!",
+    "response-headers": {
+      "Content-Type": "application/json"
+    },
+    "pass-arguments-to-command": [
+      {
+        "source": "payload",
+        "name": "head_commit.id"
+      },
+      {
+        "source": "payload", 
+        "name": "pusher.name"
+      }
+    ],
+    "trigger-rule": {
+      "and": [
+        {
+          "match": {
+            "type": "payload-hash-sha256",
+            "secret": "seu-webhook-secret-aqui",
+            "parameter": {
+              "source": "header",
+              "name": "X-Hub-Signature-256"
+            }
+          }
+        },
+        {
+          "match": {
+            "type": "value",
+            "value": "refs/heads/main",
+            "parameter": {
+              "source": "payload",
+              "name": "ref"
+            }
+          }
+        }
+      ]
+    }
+  }
+]

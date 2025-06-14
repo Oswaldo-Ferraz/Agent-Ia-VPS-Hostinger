@@ -2,17 +2,24 @@ version: '3.8'
 
 services:
   bot-whatsapp:
-    build: .
+    image: bot-whatsapp:latest
     container_name: bot-whatsapp-prod
     restart: unless-stopped
-    env_file:
-      - .env
     
     environment:
       - NODE_ENV=production
       - TZ=America/Sao_Paulo
       - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+      
+      # ⚠️ SUBSTITUA PELOS SEUS VALORES REAIS
+      - OPENAI_API_KEY=your_openai_api_key_here
+      - GOOGLE_CALENDAR_EMAIL=oswaldolrf@gmail.com
+      - GOOGLE_PRIVATE_KEY=your_google_private_key_here
+      - GOOGLE_CLIENT_EMAIL=your_service_account_email@your_project.iam.gserviceaccount.com
+      - GOOGLE_PROJECT_ID=your_google_project_id
+      - BOT_OWNER_NUMBER=5511999999999
+      - DEFAULT_TIMEZONE=America/Sao_Paulo
       
     volumes:
       # Volumes nomeados para persistência
