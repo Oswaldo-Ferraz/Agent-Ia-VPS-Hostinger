@@ -3,8 +3,6 @@ version: '3.8'
 services:
   bot-whatsapp:
     image: bot-whatsapp:latest
-    container_name: bot-whatsapp-prod
-    restart: unless-stopped
     
     environment:
       - NODE_ENV=production
@@ -44,6 +42,11 @@ services:
       retries: 3
       
     deploy:
+      restart_policy:
+        condition: unless-stopped
+        delay: 5s
+        max_attempts: 3
+        window: 120s
       resources:
         limits:
           memory: 1G
@@ -69,4 +72,5 @@ volumes:
 
 networks:
   bot-network:
-    driver: bridge
+    driver: overlay
+    attachable: true
