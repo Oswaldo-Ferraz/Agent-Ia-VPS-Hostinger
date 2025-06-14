@@ -54,9 +54,6 @@ services:
         reservations:
           memory: 512M
           cpus: '0.25'
-          
-    networks:
-      - bot-network
 
 volumes:
   whatsapp_session:
@@ -69,8 +66,3 @@ volumes:
     driver: local
   bot_tmp:
     driver: local
-
-networks:
-  bot-network:
-    driver: overlay
-    attachable: true
