@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  bot-whatsapp:
+    build: .
+    container_name: bot-whatsapp
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NODE_ENV=production
+    volumes:
+      # Persiste sessão do WhatsApp
+      - whatsapp_session:/app/.wwebjs_auth
+      # Persiste logs
+      - ./logs:/app/logs
+      # Config do Google Calendar
+      - ./config:/app/config:ro
+    networks:
+      - bot-network
+    # Opcional: expor porta se precisar de webhook/API
+    # ports:
+    #   - "3000:3000"
+    depends_on:
+      - bot-db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+
+  # Banco de dados para persistir conversas (opcional)
+  bot-db:
+    image: sqlite:latest
+    container_name: bot-whatsapp-db
+    restart: unless-stopped
+    volumes:
+      - bot_data:/var/lib/sqlite
+    networks:
+      - bot-network
+
+volumes:
+  whatsapp_session:
+    driver: local
+  bot_data:
+    driver: local
+
+networks:
+  bot-network:
+    driver: bridge
+    external: false
+  # Para conectar com N8N/Evolution API
+  shared-network:
+    external: true
+    name: n8n_network  # Ajuste conforme sua rede existente
