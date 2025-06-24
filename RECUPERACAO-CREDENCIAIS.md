@@ -40,22 +40,26 @@ API Key: sk-proj-AwWHk0k41dWHLfZmPK2NhPKyRFgE5sNb40JKmimctzk6HwSq6AQZeRGped6Ci6b
 
 ### 1. **Clonar Repositório**
 ```bash
-git clone https://github.com/SEU_USUARIO/agente-ia-vps-hostinger.git
-cd agente-ia-vps-hostinger
+git clone https://github.com/AgenciaFER/Agent-Ia-VPS-Hostinger.git
+cd Agent-Ia-VPS-Hostinger
 ```
 
-### 2. **Instalar Dependências**
+### 2. **Executar Script de Recuperação**
 ```bash
+# Executar script automático
+./setup-recovery.sh
+
+# OU fazer manualmente:
 npm install
+cp .env.example .env
 ```
 
 ### 3. **Configurar Credenciais**
 ```bash
-# Copiar template
-cp .env.example .env
-
-# Editar com as credenciais acima
+# Editar arquivo .env
 nano .env
+
+# Inserir as credenciais abaixo (salve este arquivo em local seguro!)
 ```
 
 ### 4. **Testar Conexões**
