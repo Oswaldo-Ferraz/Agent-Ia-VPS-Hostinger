@@ -1,6 +1,6 @@
 # Arquivos de configuração sensíveis
 config/google-service-account.json
-.env
+# .env agora é criptografado com git-crypt
 
 # Dependências do Node.js
 node_modules/

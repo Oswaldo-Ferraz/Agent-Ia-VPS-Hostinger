@@ -1,0 +1,6 @@
+# Arquivos que devem ser criptografados
+.env filter=git-crypt diff=git-crypt
+.env.production filter=git-crypt diff=git-crypt
+*.key filter=git-crypt diff=git-crypt
+credentials.json filter=git-crypt diff=git-crypt
+secrets.json filter=git-crypt diff=git-crypt
