@@ -1,0 +1,21 @@
+{
+  "dual_ai": {
+    "enabled": true,
+    "default_choice": "auto",
+    "claude": {
+      "model": "claude-3-5-sonnet-20241022",
+      "max_tokens": 4000,
+      "use_for": ["code", "system", "plugin", "integration", "architecture"]
+    },
+    "openai": {
+      "model": "gpt-4-turbo-preview", 
+      "max_tokens": 4000,
+      "use_for": ["content", "text", "copy", "blog", "marketing"]
+    }
+  },
+  "prompts": {
+    "contextual": true,
+    "client_specific": true,
+    "auto_inject_credentials": false
+  }
+}

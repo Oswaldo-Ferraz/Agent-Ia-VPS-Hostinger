@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "multi_client": {
+    "enabled": true,
+    "max_clients": 100,
+    "default_language": "pt-BR",
+    "default_timezone": "America/Sao_Paulo",
+    "default_currency": "BRL"
+  },
+  "security": {
+    "encryption_algorithm": "aes-256-gcm",
+    "key_rotation_days": 90,
+    "audit_enabled": true,
+    "backup_retention_days": 30
+  },
+  "integrations": {
+    "supported_services": [
+      "google",
+      "stripe",
+      "whatsapp",
+      "mailgun",
+      "twillio",
+      "hubspot",
+      "rdstation"
+    ]
+  },
+  "created_at": "2025-06-24T03:41:47.3NZ"
+}

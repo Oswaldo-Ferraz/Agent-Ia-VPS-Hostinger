@@ -1,0 +1,49 @@
+{
+  "id": "c9c640f8df3dbb4c",
+  "name": "Agência Fer Digital",
+  "email": "contato@agenciafer.com.br",
+  "phone": "",
+  "company": "Agência Fer Marketing Digital Ltda",
+  "sites": [
+    {
+      "domain": "agenciafer.com.br",
+      "wp_path": "/domains/agenciafer.com.br/public_html",
+      "ssh_config": {
+        "host": "147.93.37.192",
+        "port": "65002",
+        "user": "u148368058"
+      },
+      "status": "active"
+    },
+    {
+      "domain": "aiofotoevideo.com.br",
+      "wp_path": "/domains/aiofotoevideo.com.br/public_html",
+      "ssh_config": {
+        "host": "147.93.37.192",
+        "port": "65002",
+        "user": "u148368058"
+      },
+      "status": "active"
+    }
+  ],
+  "credentials": {},
+  "integrations": {},
+  "preferences": {
+    "language": "pt-BR",
+    "timezone": "America/Sao_Paulo",
+    "currency": "BRL",
+    "default_ai": "auto",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "webhook": false
+    }
+  },
+  "metadata": {
+    "created_at": "2025-06-24T03:47:00.086Z",
+    "updated_at": "2025-06-24T03:47:00.086Z",
+    "created_by": "ai-agent",
+    "version": "1.0.0"
+  },
+  "status": "active"
+}

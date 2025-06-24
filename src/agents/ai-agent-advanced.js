@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// 🧠 AGENTE IA AVANÇADO - Claude API + WordPress Automation
+// 🧠 AGENTE IA AVANÇADO - Claude API + WordPress Automation + Multi-Cliente
 // Sistema completo para criação automática de páginas e funcionalidades
 
 require('dotenv').config();
@@ -12,7 +12,13 @@ const path = require('path');
 const Anthropic = require('@anthropic-ai/sdk');
 const OpenAI = require('openai');
 
+// Importar sistema multi-cliente
+const ClientCLI = require('../core/client-cli');
+
 const execAsync = promisify(exec);
+
+// Inicializar CLI de clientes
+const clientCLI = new ClientCLI();
 
 // Configurações
 const CONFIG = {
@@ -2334,10 +2340,120 @@ get_header();
 async function processAdvancedCommand(input) {
   const [command, ...args] = input.split(' ');
   
+  // Comandos de cliente (multi-cliente)
+  if (command === 'client') {
+    const [subCommand, ...subArgs] = args;
+    
+    switch (subCommand) {
+      case 'create':
+        // Melhor parsing do nome com aspas
+        const fullCommand = args.join(' ');
+        const nameMatch = fullCommand.match(/"([^"]+)"/);
+        const clientName = nameMatch ? nameMatch[1] : subArgs[0];
+        
+        if (!clientName) {
+          return '❌ Uso: client create [nome] --email="..." --sites="..."';
+        }
+        
+        // Extrair opções
+        const options = {};
+        const optionsText = fullCommand;
+        
+        const emailMatch = optionsText.match(/--email="([^"]+)"/);
+        if (emailMatch) options.email = emailMatch[1];
+        
+        const sitesMatch = optionsText.match(/--sites="([^"]+)"/);
+        if (sitesMatch) options.sites = sitesMatch[1];
+        
+        try {
+          await clientCLI.createClientCommand(clientName, options);
+          return `✅ Cliente "${clientName}" criado com sucesso!`;
+        } catch (error) {
+          return `❌ Erro: ${error.message}`;
+        }
+        
+      case 'list':
+        try {
+          await clientCLI.listClientsCommand();
+          return '✅ Lista de clientes exibida acima';
+        } catch (error) {
+          return `❌ Erro: ${error.message}`;
+        }
+        
+      case 'get':
+        const identifier = subArgs[0];
+        if (!identifier) {
+          return '❌ Uso: client get [nome ou ID]';
+        }
+        
+        try {
+          await clientCLI.getClientCommand(identifier);
+          return '✅ Cliente encontrado e exibido acima';
+        } catch (error) {
+          return `❌ Erro: ${error.message}`;
+        }
+        
+      case 'get-by-site':
+        const domain = subArgs[0];
+        if (!domain) {
+          return '❌ Uso: client get-by-site [dominio]';
+        }
+        
+        try {
+          await clientCLI.getClientBySiteCommand(domain);
+          return '✅ Cliente do site encontrado e exibido acima';
+        } catch (error) {
+          return `❌ Erro: ${error.message}`;
+        }
+        
+      case 'add-site':
+        const [clientId, siteDomain, wpPath] = subArgs;
+        if (!clientId || !siteDomain) {
+          return '❌ Uso: client add-site [clientId] [dominio] [wpPath]';
+        }
+        
+        try {
+          await clientCLI.addSiteCommand(clientId, siteDomain, wpPath);
+          return `✅ Site ${siteDomain} adicionado ao cliente!`;
+        } catch (error) {
+          return `❌ Erro: ${error.message}`;
+        }
+        
+      case 'stats':
+        const statsClientId = subArgs[0];
+        if (!statsClientId) {
+          return '❌ Uso: client stats [clientId]';
+        }
+        
+        try {
+          await clientCLI.statsCommand(statsClientId);
+          return '✅ Estatísticas exibidas acima';
+        } catch (error) {
+          return `❌ Erro: ${error.message}`;
+        }
+        
+      case 'help':
+        clientCLI.showHelp();
+        return '✅ Ajuda de clientes exibida acima';
+        
+      default:
+        return `❌ Subcomando não reconhecido: "${subCommand}"\n💡 Use "client help" para ver comandos disponíveis`;
+    }
+  }
+  
   switch (command) {
     case 'help':
       return `
 🧠 AGENTE IA AVANÇADO - Comandos Disponíveis
+
+🏢 SISTEMA MULTI-CLIENTE:
+• client create [nome] --email="..." --sites="..." - Criar cliente
+• client list - Listar todos os clientes
+• client get [nome ou ID] - Buscar cliente específico  
+• client get-by-site [dominio] - Buscar cliente por site
+• client add-site [clientId] [dominio] [path] - Adicionar site ao cliente
+• client stats [clientId] - Estatísticas do cliente
+• client help - Ajuda completa de clientes
 
 🔧 COMANDOS CLAUDE (Código/Sistemas):
 • create-page [site] [descrição] - Criar página WordPress

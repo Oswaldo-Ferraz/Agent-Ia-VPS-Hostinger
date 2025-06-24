@@ -1,0 +1,29 @@
+[
+  {
+    "id": "client-ewvar06wn",
+    "name": "Agência Fer",
+    "email": "contato@agenciafer.com.br",
+    "sites": [
+      "agenciafer.com.br"
+    ],
+    "created_at": "2025-06-24T03:51:45.731Z"
+  },
+  {
+    "id": "client-tsho0mwoa",
+    "name": "Método Verus",
+    "email": "contato@metodoverus.com.br",
+    "sites": [
+      "metodoverus.com.br"
+    ],
+    "created_at": "2025-06-24T03:51:45.735Z"
+  },
+  {
+    "id": "client-8rqcna54k",
+    "name": "\"Agência",
+    "email": "contato@agenciafer.com.br",
+    "sites": [
+      "agenciafer.com.br"
+    ],
+    "created_at": "2025-06-24T03:53:44.463Z"
+  }
+]

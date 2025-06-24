@@ -1,0 +1,43 @@
+{
+  "id": "client-tsho0mwoa",
+  "name": "Método Verus",
+  "email": "contato@metodoverus.com.br",
+  "sites": [
+    {
+      "domain": "metodoverus.com.br",
+      "wp_path": "/domains/metodoverus.com.br/public_html"
+    }
+  ],
+  "credentials": {
+    "openai": {
+      "api_key": "sk-proj-metodoverus-key"
+    },
+    "whatsapp": {
+      "token": "metodoverus-whatsapp-token",
+      "verify_token": "metodoverus-verify"
+    },
+    "stripe": {
+      "public_key": "pk_live_metodoverus",
+      "secret_key": "sk_live_metodoverus"
+    }
+  },
+  "integrations": {
+    "email_marketing": {
+      "enabled": true,
+      "config": {
+        "provider": "mailchimp",
+        "api_key": "mailchimp-api-key",
+        "list_id": "default-list"
+      },
+      "updated_at": "2025-06-24T03:51:45.905Z"
+    }
+  },
+  "preferences": {
+    "default_ai": "auto",
+    "language": "pt-BR",
+    "timezone": "America/Sao_Paulo",
+    "currency": "BRL"
+  },
+  "created_at": "2025-06-24T03:51:45.735Z",
+  "updated_at": "2025-06-24T03:51:45.906Z"
+}

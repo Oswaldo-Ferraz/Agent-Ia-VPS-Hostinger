@@ -1,0 +1,46 @@
+{
+  "id": "client-p1yn154sg",
+  "name": "Agência Fer",
+  "email": "contato@agenciafer.com.br",
+  "sites": [
+    {
+      "domain": "agenciafer.com.br",
+      "wp_path": "/domains/agenciafer.com.br/public_html",
+      "ssh_config": {
+        "host": "147.93.37.192",
+        "port": 65002,
+        "user": "u148368058"
+      }
+    }
+  ],
+  "credentials": {
+    "google": {
+      "client_id": "agencia-google-client-id",
+      "client_secret": "agencia-google-secret",
+      "service_account": "/path/to/agencia-service-account.json"
+    },
+    "stripe": {
+      "public_key": "pk_test_agencia",
+      "secret_key": "sk_test_agencia",
+      "webhook_secret": "whsec_agencia"
+    }
+  },
+  "integrations": {
+    "google_calendar": {
+      "enabled": true,
+      "calendar_id": "primary"
+    },
+    "stripe_payments": {
+      "enabled": true,
+      "currency": "BRL"
+    }
+  },
+  "preferences": {
+    "default_ai": "auto",
+    "language": "pt-BR",
+    "timezone": "America/Sao_Paulo",
+    "currency": "BRL"
+  },
+  "created_at": "2025-06-24T03:51:25.734Z",
+  "updated_at": "2025-06-24T03:51:25.735Z"
+}

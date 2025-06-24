@@ -11,7 +11,13 @@
     "setup": "./scripts/setup/setup-claude-api.sh",
     "test": "node scripts/tests/test-claude.js",
     "test-node": "node -e \"console.log('✅ Node.js funcionando!')\"",
-    "dev": "nodemon src/agents/ai-agent-advanced.js"
+    "dev": "nodemon src/agents/ai-agent-advanced.js",
+    "client": "node src/core/multi-client-system.js",
+    "client-test": "node src/core/client-manager.js",
+    "cred-test": "node src/security/credential-manager.js",
+    "client-list": "./scripts/client-cli.sh list",
+    "client-stats": "./scripts/client-cli.sh stats",
+    "client-backup": "./scripts/client-cli.sh backup"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.54.0",
