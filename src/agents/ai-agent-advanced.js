@@ -2471,7 +2471,23 @@ async function processAdvancedCommand(input) {
 • create-post [site] [tópico] - Conteúdo (OpenAI) + Estrutura (Claude)
 • create-content [tipo] [tópico] - Escolha automática ou manual da IA
 
-🌐 COMANDOS GERAIS:
+🌐 COMANDOS GOOGLE CLOUD:
+• google-cloud setup [clientId] - Configurar Google Cloud para cliente
+• google-cloud projects - Listar projetos Google Cloud  
+• google-cloud test [clientId] - Testar integração do cliente
+• google-cloud create-client [nome] - Criar cliente com Google Cloud
+• google-cloud status - Status da integração Google Cloud
+• gc [comando] - Alias para google-cloud
+
+🔥 COMANDOS FIREBASE:
+• firebase setup [clientId] [projectId?] - Configurar Firebase para cliente
+• firebase create-function [clientId] [nome] [descrição] - Criar function com Claude
+• firebase deploy [clientId] - Deploy das functions
+• firebase list-functions [clientId] - Listar functions do cliente
+• firebase create-client [nome] - Criar cliente com Firebase completo
+• firebase status - Status da integração Firebase
+
+🔧 COMANDOS GERAIS:
 • sites - Listar sites disponíveis
 • status - Verificar status dos sites
 • ai [pergunta] - Assistente IA (escolhe automaticamente)
@@ -2482,6 +2498,14 @@ async function processAdvancedCommand(input) {
 • create-copy malucosta.com.br vendas Curso de Fotografia
 • create-post aiofotoevideo.com.br dicas de fotografia para iniciantes
 • create-blog agenciafer.com.br marketing digital 3
+• gc setup client-abc123
+• gc create-client "Empresa XYZ"
+• fb setup client-abc123
+• fb create-function client-abc123 sendEmail "Function para envio de emails"
+• fb deploy client-abc123
+• fb list-functions client-abc123
+• fb create-client "Empresa XYZ"
+• fb status
 `;
 
     case 'create-page':
@@ -2631,6 +2655,315 @@ async function processAdvancedCommand(input) {
       
       return statusReport;
 
+    // 🌐 COMANDOS GOOGLE CLOUD
+    case 'google-cloud':
+    case 'gc':
+      const [gcCommand, ...gcArgs] = args;
+      
+      switch (gcCommand) {
+        case 'setup':
+          const gcClientId = gcArgs[0];
+          const customProjectId = gcArgs[1];
+          
+          if (!gcClientId) {
+            return '❌ Uso: google-cloud setup [clientId] [projectId-opcional]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const result = await clientManager.setupGoogleCloudForClient(gcClientId, customProjectId);
+            
+            if (result.success) {
+              return `✅ Google Cloud configurado para cliente!\n📁 Projeto: ${result.projectId}\n👤 Service Account: ${result.serviceAccountEmail}`;
+            } else {
+              return '❌ Falha ao configurar Google Cloud';
+            }
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'projects':
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const projects = await clientManager.listGoogleCloudProjects();
+            
+            if (projects.length === 0) {
+              return '📁 Nenhum projeto Google Cloud encontrado';
+            }
+            
+            let result = '☁️ PROJETOS GOOGLE CLOUD:\n\n';
+            projects.forEach(project => {
+              result += `📁 ${project.name}\n`;
+              result += `   ID: ${project.projectId}\n`;
+              result += `   Cliente: ${project.clientName || 'N/A'}\n`;
+              result += `   Status: ${project.lifecycleState || 'N/A'}\n\n`;
+            });
+            
+            return result;
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'test':
+          const testClientId = gcArgs[0];
+          if (!testClientId) {
+            return '❌ Uso: google-cloud test [clientId]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const result = await clientManager.testGoogleCloudIntegration(testClientId);
+            
+            if (result.success) {
+              return `✅ Integração Google Cloud funcionando!\n📁 Projeto: ${result.projectId}`;
+            } else {
+              return `❌ Falha no teste: ${result.error}`;
+            }
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'create-client':
+          const newClientName = gcArgs.join(' ');
+          if (!newClientName) {
+            return '❌ Uso: google-cloud create-client [Nome do Cliente]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const client = await clientManager.createClientWithGoogleCloud({
+              name: newClientName
+            }, true);
+            
+            return `✅ Cliente criado com Google Cloud!\n👤 ID: ${client.id}\n📁 Nome: ${client.name}`;
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'status':
+          try {
+            const GoogleCloudIntegrator = require('../core/google-cloud-integrator');
+            const integrator = new GoogleCloudIntegrator();
+            const status = integrator.getStatus();
+            
+            let result = '📊 STATUS GOOGLE CLOUD:\n\n';
+            result += `🔐 Credenciais configuradas: ${status.isReady ? '✅' : '❌'}\n`;
+            result += `☁️ Cloud Manager: ${status.hasCloudManager ? '✅' : '❌'}\n`;
+            result += `🧠 Claude API: ${status.hasClaudeApi ? '✅' : '❌'}\n`;
+            
+            if (!status.isReady) {
+              result += '\n💡 Configure as credenciais: npm run setup:google-credentials';
+            }
+            
+            return result;
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'help':
+          return `
+🌐 COMANDOS GOOGLE CLOUD:
+
+• google-cloud setup [clientId] [projectId?] - Configurar Google Cloud para cliente
+• google-cloud projects - Listar projetos Google Cloud
+• google-cloud test [clientId] - Testar integração do cliente
+• google-cloud create-client [nome] - Criar cliente com Google Cloud
+• google-cloud status - Status da integração Google Cloud
+
+💡 EXEMPLOS:
+• gc setup client-abc123
+• gc projects
+• gc test client-abc123
+• gc create-client "Empresa XYZ"
+• gc status
+
+🔧 CONFIGURAÇÃO INICIAL:
+• npm run setup:google-credentials - Configurar credenciais admin
+• npm run test:google-cloud - Testar integração
+`;
+          
+        default:
+          return `❌ Subcomando Google Cloud não reconhecido: "${gcCommand}"\n💡 Use "google-cloud help" para ver comandos disponíveis`;
+      }
+
+    // 🔥 COMANDOS FIREBASE
+    case 'firebase':
+    case 'fb':
+      const [fbCommand, ...fbArgs] = args;
+      
+      switch (fbCommand) {
+        case 'setup':
+          const fbClientId = fbArgs[0];
+          const customProjectId = fbArgs[1];
+          
+          if (!fbClientId) {
+            return '❌ Uso: firebase setup [clientId] [projectId-opcional]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const result = await clientManager.setupFirebaseForClient(fbClientId, customProjectId);
+            
+            if (result.success) {
+              return `✅ Firebase configurado!\n🔥 Projeto: ${result.projectId}\n🌐 Console: ${result.consoleUrl}`;
+            } else {
+              return '❌ Falha ao configurar Firebase';
+            }
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'create-function':
+          const [funcClientId, functionName, ...descParts] = fbArgs;
+          const description = descParts.join(' ');
+          
+          if (!funcClientId || !functionName || !description) {
+            return '❌ Uso: firebase create-function [clientId] [nomeFuncao] [descrição]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const result = await clientManager.createFirebaseFunction(funcClientId, functionName, description);
+            
+            if (result.success) {
+              return `✅ Function "${functionName}" criada!\n📁 Arquivo: ${result.file}\n🔥 Projeto: ${result.projectId}`;
+            } else {
+              return '❌ Falha ao criar function';
+            }
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'deploy':
+          const deployClientId = fbArgs[0];
+          
+          if (!deployClientId) {
+            return '❌ Uso: firebase deploy [clientId]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const result = await clientManager.deployFirebaseFunctions(deployClientId);
+            
+            if (result.success) {
+              return `✅ Deploy realizado!\n🔥 Projeto: ${result.projectId}\n🌐 Console: ${result.consoleUrl}`;
+            } else {
+              return '❌ Falha no deploy';
+            }
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'list-functions':
+          const listClientId = fbArgs[0];
+          
+          if (!listClientId) {
+            return '❌ Uso: firebase list-functions [clientId]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const result = await clientManager.listFirebaseFunctions(listClientId);
+            
+            let output = `🔥 FUNCTIONS - ${result.clientName}:\n`;
+            output += `📁 Projeto: ${result.projectId}\n\n`;
+            
+            if (result.functions.length === 0) {
+              output += '❌ Nenhuma function encontrada';
+            } else {
+              result.functions.forEach(func => {
+                output += `⚡ ${func}\n`;
+              });
+            }
+            
+            return output;
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'create-client':
+          const fbNewClientName = fbArgs.join(' ');
+          if (!fbNewClientName) {
+            return '❌ Uso: firebase create-client [Nome do Cliente]';
+          }
+          
+          try {
+            const ClientManager = require('../core/client-manager');
+            const clientManager = new ClientManager();
+            
+            const client = await clientManager.createClientWithFirebase({
+              name: fbNewClientName
+            }, true, true);
+            
+            return `✅ Cliente criado com Firebase!\n👤 ID: ${client.id}\n🔥 Nome: ${client.name}`;
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'status':
+          try {
+            const FirebaseIntegrator = require('../core/firebase-integrator');
+            const integrator = new FirebaseIntegrator();
+            const status = integrator.getStatus();
+            
+            let result = '🔥 STATUS FIREBASE:\n\n';
+            result += `🔐 Credenciais configuradas: ${status.isReady ? '✅' : '❌'}\n`;
+            result += `🔥 Firebase Manager: ${status.hasFirebaseManager ? '✅' : '❌'}\n`;
+            result += `🧠 Claude API: ${status.hasClaudeApi ? '✅' : '❌'}\n`;
+            
+            if (!status.isReady) {
+              result += '\n💡 Configure as credenciais: npm run setup:google-credentials';
+            }
+            
+            return result;
+          } catch (error) {
+            return `❌ Erro: ${error.message}`;
+          }
+          
+        case 'help':
+          return `
+🔥 COMANDOS FIREBASE:
+
+• firebase setup [clientId] [projectId?] - Configurar Firebase para cliente
+• firebase create-function [clientId] [nome] [descrição] - Criar function com Claude
+• firebase deploy [clientId] - Deploy das functions
+• firebase list-functions [clientId] - Listar functions do cliente
+• firebase create-client [nome] - Criar cliente com Firebase completo
+• firebase status - Status da integração Firebase
+
+💡 EXEMPLOS:
+• fb setup client-abc123
+• fb create-function client-abc123 sendEmail "Function para envio de emails"
+• fb deploy client-abc123
+• fb list-functions client-abc123
+• fb create-client "Empresa XYZ"
+• fb status
+
+🔧 CONFIGURAÇÃO INICIAL:
+• npm run setup:google-credentials - Configurar credenciais admin
+• npm run test:firebase - Testar integração
+`;
+          
+        default:
+          return `❌ Subcomando Firebase não reconhecido: "${fbCommand}"\n💡 Use "firebase help" para ver comandos disponíveis`;
+      }
+
     default:
       return `❌ Comando não reconhecido: "${command}"\n💡 Digite "help" para ver todos os comandos disponíveis.`;
   }
@@ -2681,5 +3014,3 @@ rl.on('line', async (input) => {
   console.log();
   rl.prompt();
 });
-
-module.exports = { processAdvancedCommand, askClaude };

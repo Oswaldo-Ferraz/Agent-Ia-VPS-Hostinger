@@ -1,8 +1,8 @@
-# 🧠 AGENTE IA - VPS & HOSTINGER + CLAUDE API
+# 🧠 AGENTE IA AVANÇADO - VPS Hostinger v2.0
 
-**Agente inteligente para gerenciamento automatizado de VPS e WordPress com integração Claude API**
+**Sistema completo de automação com IA dual, multi-cliente e integração Google Cloud**
 
-> Crie páginas, formulários e sistemas completos usando comandos em linguagem natural!
+> Gerencie múltiplos clientes, automatize Google Cloud e crie sistemas completos com comandos em linguagem natural!
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-green.svg)
@@ -10,18 +10,43 @@
 
 ---
 
-## 🚀 INÍCIO RÁPIDO
+## 🚀 NOVIDADES v2.0
+
+### ✨ Recursos Principais
+- **🏢 Sistema Multi-Cliente**: Gerencie múltiplos clientes com credenciais isoladas
+- **🌐 Integração Google Cloud**: Automação completa de projetos, APIs e Service Accounts
+- **🔐 Gerenciamento Seguro de Credenciais**: Criptografia local para proteção de dados
+- **🔗 SDKs Google Oficiais**: Calendar, Gmail, Drive, Sheets, Maps e mais
+- **🤖 IA Dual**: Claude (código/sistemas) + OpenAI (conteúdo/textos)
+- **⚡ CLI Interativa**: Comandos intuitivos para todas as funcionalidades
+
+### 🏗️ Automação Google Cloud
+- **Criação automática de projetos** para cada cliente
+- **Ativação de APIs** (Calendar, Gmail, Drive, Sheets, etc.)
+- **Geração de Service Accounts** com permissões adequadas
+- **Credenciais JSON** prontas para uso
+- **Teste automático** de integrações
+
+---
+
+## 📦 INSTALAÇÃO RÁPIDA
 
 ```bash
-# Configuração automática
-./scripts/setup/setup-claude-api.sh
+# 1. Clone o repositório
+git clone <repository-url>
+cd agente-ia-vps-hostinger
 
-# Iniciar Agente IA
+# 2. Instale dependências
+npm install
+
+# 3. Configure credenciais do Google Cloud (opcional)
+npm run setup:google-credentials
+
+# 4. Verifique o status do sistema
+npm run system-status
+
+# 5. Inicie o agente
 npm start
-
-# Outros agentes
-npm run vps        # VPS management
-npm run hostinger  # WordPress management
 ```
 
 ---
