@@ -1,5 +1,6 @@
 # Arquivos de configuração sensíveis
 config/google-service-account.json
+.env
 
 # Dependências do Node.js
 node_modules/

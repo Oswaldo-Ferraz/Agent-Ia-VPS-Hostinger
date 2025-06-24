@@ -1,21 +1,19 @@
 {
-  "name": "bot-whatsapp",
+  "name": "vps-agent",
   "version": "1.0.0",
-  "description": "Bot de WhatsApp integrado com OpenAI",
-  "main": "index.js",
+  "description": "Agente simples para acesso VPS via SSH",
+  "main": "vps-agent.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node vps-agent.js",
+    "dev": "nodemon vps-agent.js"
   },
   "dependencies": {
-    "csv-parser": "^3.2.0",
-    "dotenv": "^16.3.1",
-    "googleapis": "^149.0.0",
-    "openai": "^4.20.0",
-    "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.23.0"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
-  }
+  },
+  "keywords": ["vps", "ssh", "cli"],
+  "author": "AFV",
+  "license": "MIT"
 }
