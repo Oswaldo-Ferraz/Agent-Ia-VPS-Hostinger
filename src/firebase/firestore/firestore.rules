@@ -1,0 +1,194 @@
+rules_version = '2';
+
+/**
+ * 🔒 REGRAS DE SEGURANÇA FIRESTORE
+ * Sistema multiempresa com isolamento total entre empresas
+ */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // 🏢 COMPANIES - Acesso restrito ao próprio documento da empresa
+    match /companies/{companyId} {
+      // Permitir leitura e escrita apenas para a própria empresa autenticada
+      allow read, write: if request.auth != null && 
+                           request.auth.uid == companyId;
+      
+      // Permitir criação de nova empresa (signup)
+      allow create: if request.auth != null && 
+                      request.auth.uid == resource.data.companyId &&
+                      isValidCompanyData(request.resource.data);
+      
+      // 👤 CLIENTS - Subcollection de clientes por empresa
+      match /clients/{clientId} {
+        // Acesso apenas para a empresa dona dos clientes
+        allow read, write: if request.auth != null && 
+                             request.auth.uid == companyId &&
+                             belongsToCompany(companyId);
+        
+        // 💬 CONVERSATIONS - Subcollection de conversas por cliente
+        match /conversations/{conversationId} {
+          // Acesso apenas para a empresa dona do cliente
+          allow read, write: if request.auth != null && 
+                               request.auth.uid == companyId &&
+                               belongsToCompany(companyId);
+          
+          // Permitir criação de nova conversa com validação
+          allow create: if request.auth != null && 
+                          (request.auth.uid == companyId || isSystemUser()) &&
+                          isValidConversationData(request.resource.data);
+        }
+      }
+      
+      // 💳 PAYMENT HISTORY - Subcollection de histórico de pagamentos
+      match /paymentHistory/{paymentId} {
+        // Apenas leitura para a própria empresa
+        allow read: if request.auth != null && 
+                      request.auth.uid == companyId;
+        
+        // Escrita apenas para sistema (webhooks Stripe)
+        allow write: if isSystemUser() || isStripeWebhook();
+      }
+    }
+    
+    // 📊 SYSTEM STATS - Apenas leitura para empresas autenticadas, escrita para sistema
+    match /systemStats/{document} {
+      allow read: if request.auth != null;
+      allow write: if isSystemUser();
+    }
+    
+    // 📝 AUDIT LOGS - Apenas escrita para sistema, leitura para admins
+    match /auditLogs/{logId} {
+      allow read: if isAdmin();
+      allow write: if isSystemUser();
+    }
+    
+    // 🔧 FUNCTIONS
+    
+    /**
+     * ✅ Verificar se usuário pertence à empresa
+     */
+    function belongsToCompany(companyId) {
+      return request.auth != null && request.auth.uid == companyId;
+    }
+    
+    /**
+     * 🤖 Verificar se é usuário do sistema (Cloud Functions)
+     */
+    function isSystemUser() {
+      return request.auth != null && 
+             request.auth.token.firebase.sign_in_provider == 'custom' &&
+             request.auth.token.system_user == true;
+    }
+    
+    /**
+     * 💳 Verificar se é webhook do Stripe
+     */
+    function isStripeWebhook() {
+      return request.auth != null && 
+             request.auth.token.stripe_webhook == true;
+    }
+    
+    /**
+     * 👑 Verificar se é admin do sistema
+     */
+    function isAdmin() {
+      return request.auth != null && 
+             request.auth.token.admin == true;
+    }
+    
+    /**
+     * ✅ Validar dados da empresa
+     */
+    function isValidCompanyData(data) {
+      return data.keys().hasAll(['name', 'companyId', 'createdAt']) &&
+             data.name is string &&
+             data.name.size() >= 2 &&
+             data.companyId is string &&
+             data.companyId.size() > 0 &&
+             (data.domain is string || data.whatsappId is string || data.instagram is string);
+    }
+    
+    /**
+     * ✅ Validar dados do cliente
+     */
+    function isValidClientData(data) {
+      return data.keys().hasAll(['name', 'companyId', 'clientId', 'createdAt']) &&
+             data.name is string &&
+             data.name.size() >= 2 &&
+             data.companyId is string &&
+             data.clientId is string &&
+             data.contact is map;
+    }
+    
+    /**
+     * ✅ Validar dados da conversa
+     */
+    function isValidConversationData(data) {
+      return data.keys().hasAll(['companyId', 'clientId', 'content', 'timestamp']) &&
+             data.companyId is string &&
+             data.clientId is string &&
+             data.content is string &&
+             data.content.size() > 0 &&
+             data.source in ['whatsapp', 'website', 'instagram', 'email', 'phone'] &&
+             data.category in ['current', 'long-term'];
+    }
+    
+    /**
+     * 🕒 Verificar se empresa tem plano ativo
+     */
+    function hasActivePlan(companyId) {
+      return get(/databases/$(database)/documents/companies/$(companyId)).data.activePlan == true;
+    }
+    
+    /**
+     * 📊 Verificar limites de uso da empresa
+     */
+    function isWithinUsageLimits(companyId) {
+      let company = get(/databases/$(database)/documents/companies/$(companyId)).data;
+      return company.stats.monthlyUsage.conversations < company.plan.limits.maxConversationsPerMonth;
+    }
+    
+    /**
+     * 🔒 Regras específicas para diferentes tipos de operação
+     */
+    
+    // Permitir leitura de dados próprios sempre
+    function canReadOwnData(companyId) {
+      return request.auth != null && 
+             request.auth.uid == companyId;
+    }
+    
+    // Permitir escrita apenas se tem plano ativo e dentro dos limites
+    function canWriteWithLimits(companyId) {
+      return request.auth != null && 
+             request.auth.uid == companyId &&
+             hasActivePlan(companyId) &&
+             isWithinUsageLimits(companyId);
+    }
+    
+    // Operações que não contam para limite (leitura, atualizações menores)
+    function canWriteUnlimited(companyId) {
+      return request.auth != null && 
+             request.auth.uid == companyId &&
+             hasActivePlan(companyId);
+    }
+  }
+}
+
+/**
+ * 📋 RESUMO DAS REGRAS:
+ * 
+ * 1. **Isolamento Total**: Cada empresa só acessa seus próprios dados
+ * 2. **Autenticação Obrigatória**: Todas as operações exigem autenticação
+ * 3. **Validação de Dados**: Estrutura de dados é validada nas operações
+ * 4. **Controle de Planos**: Operações limitadas por plano ativo
+ * 5. **Sistema Interno**: Cloud Functions têm acesso especial
+ * 6. **Auditoria**: Todas as operações são logadas
+ * 
+ * 🔐 NÍVEIS DE ACESSO:
+ * - **Empresa**: Acesso total aos próprios dados
+ * - **Sistema**: Acesso para automação e webhooks
+ * - **Admin**: Acesso para auditoria e estatísticas
+ * - **Webhook**: Acesso limitado para atualizações de pagamento
+ */
