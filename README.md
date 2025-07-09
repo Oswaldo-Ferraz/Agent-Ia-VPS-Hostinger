@@ -248,7 +248,7 @@ Este projeto está sob a licença **MIT**.
 
 **🧠 Agente IA - Transformando ideias em realidade digital**
 
-*Criado com ❤️ e muita inteligência artificial*
+*Criado por ❤️ Ferraz com muita inteligência artificial*
 
 [⭐ Star no GitHub](/) | [📚 Documentação](docs/) | [🚀 Começar Agora](#-início-rápido)
 
